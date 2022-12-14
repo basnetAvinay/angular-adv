@@ -33,6 +33,10 @@ export class AppComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    // this.rxjsStuff();
+  }
+
+  rxjsStuff(): void {
     // initializing an observable
     this.observable = new Observable((subscriber) => {
       // emitting next value
