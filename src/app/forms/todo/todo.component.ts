@@ -1,15 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Todo} from './todo.model';
 import {FormControl, Validators} from '@angular/forms';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import {deleteTodo, saveOrUpdateTodo} from './store/todo.actions';
+import {selectTodos} from './store/todo.selector';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.scss']
 })
-export class TodoComponent implements OnInit {
+export class TodoComponent implements OnInit, OnDestroy {
+
+  private unsubscribe = new Subject<void>();
 
   todos: Todo[] = [];
   todoDescriptionFormControl = new FormControl('', [Validators.required]);
@@ -19,26 +23,17 @@ export class TodoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.todos = [
-      {id: 1, description: 'Buy milk', done: true},
-      {id: 2, description: 'Learn RxJS', done: false},
-      {id: 3, description: 'Learn Angular', done: true},
-      {id: 4, description: 'Learn NgRx', done: false},
-      {id: 5, description: 'Learn Angular animation', done: true},
-    ];
+    this.store.pipe(
+      select(selectTodos),
+      takeUntil(this.unsubscribe)
+    ).subscribe(items => this.todos = items);
   }
 
-  undoOrCompleteTodo(item: Todo): void {
-    this.todos = this.todos.map(todo => todo.id === item.id ? {...todo, done: !todo.done} : todo);
-    const todo: Todo = {...item, done: !item.done};
+  undoOrCompleteTodo(todo: Todo) {
     this.store.dispatch(saveOrUpdateTodo({todo, isUpdate: true}));
   }
 
   deleteTodo(todoId: number): void {
-    const todo = this.todos.find(todo => todo.id === todoId);
-    if (todo) {
-      this.todos.splice(this.todos.indexOf(todo), 1);
-    }
     this.store.dispatch(deleteTodo({todoId}));
   }
 
@@ -49,8 +44,12 @@ export class TodoComponent implements OnInit {
         description: this.todoDescriptionFormControl.value ?? '',
         done: false
       }
-      this.todos.push(todo);
       this.store.dispatch(saveOrUpdateTodo({todo, isUpdate: false}));
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
