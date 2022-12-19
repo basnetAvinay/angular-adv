@@ -2,20 +2,13 @@ import {Todo} from '../todo.model';
 import * as TodoActions from './todo.actions';
 import {createReducer, on} from '@ngrx/store';
 import * as _ from 'lodash';
-import {applyMixins} from 'rxjs/internal/util/applyMixins';
 
 export interface TodoState {
   todos: Todo[];
 }
 
 export const todoInitialState: TodoState = {
-  todos: [
-    {id: 1, description: 'Buy milk', done: true},
-    {id: 2, description: 'Learn RxJS', done: false},
-    {id: 3, description: 'Learn Angular', done: true},
-    {id: 4, description: 'Learn NgRx', done: false},
-    {id: 5, description: 'Learn Angular animation', done: true},
-  ]
+  todos: []
 };
 
 export const todoFeatureKey = 'todoState';
@@ -37,5 +30,9 @@ export const todoReducer = createReducer(
       return {...state, todos: stateCopy.todos}
     }
     return state;
-  })
+  }),
+  on(TodoActions.setTodos, (state, payload) => {
+    const todos = payload.todos;
+    return {...state, todos};
+  }),
 );
