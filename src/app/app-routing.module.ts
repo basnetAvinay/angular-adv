@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {VoidComponent} from './forms/void/void.component';
+import {HomeComponent} from './forms/home/home.component';
 
 const routes: Routes = [
-  {path: '', component: VoidComponent},
+  {path: '', component: HomeComponent},
   {path: 'todo', loadChildren: () => import('./forms/todo/todo.module').then(m => m.TodoModule)}
 ];
 

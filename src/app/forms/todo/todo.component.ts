@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {Todo} from './todo.model';
 import {FormControl, Validators} from '@angular/forms';
 import {select, Store} from '@ngrx/store';
@@ -19,7 +19,8 @@ export class TodoComponent implements OnInit, OnDestroy {
   todoDescriptionFormControl = new FormControl('', [Validators.required]);
   todoIdFormControl = new FormControl(null, [Validators.required]);
 
-  constructor(private readonly store: Store) {
+  constructor(private readonly store: Store,
+              private el: ElementRef) {
   }
 
   ngOnInit(): void {

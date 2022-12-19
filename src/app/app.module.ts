@@ -6,15 +6,22 @@ import {AppComponent} from './app.component';
 import {StoreModule} from '@ngrx/store';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {VoidComponent} from './forms/void/void.component';
+import {HomeComponent} from './forms/home/home.component';
 import {HeaderModule} from './components/header/header.module';
-import { EffectsModule } from '@ngrx/effects';
-import {HttpClientModule} from '@angular/common/http';
+import {EffectsModule} from '@ngrx/effects';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {AppHttpInterceptor} from './app-http-interceptor';
+import {ExponentialStrengthPipe} from './pipes/exponential-strength.pipe';
+
+export const httpInterceptorProviders = [
+  {provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true},
+];
 
 @NgModule({
   declarations: [
     AppComponent,
-    VoidComponent
+    HomeComponent,
+    ExponentialStrengthPipe
   ],
   imports: [
     BrowserModule,
@@ -30,7 +37,7 @@ import {HttpClientModule} from '@angular/common/http';
     EffectsModule.forRoot([]),
     HttpClientModule
   ],
-  providers: [],
+  providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule {
